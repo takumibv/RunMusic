@@ -1,5 +1,8 @@
 package jp.ac.titech.itpro.sdl.runmusic;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -20,17 +23,19 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
+import static android.content.Context.SENSOR_SERVICE;
+import static java.lang.Math.*;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, SensorEventListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private final static String TAG = "MainActivity";
+    private final static int MYREQCODE = 1234;
     private final ArrayList<String> feeling_list = new ArrayList<String>();
-
-    private SensorManager sensorMgr;
-    private Sensor accelerometer;
-    private float vx, vy, vz;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,28 +63,41 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
-        accelerometer = sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        if (accelerometer == null) {
-            Toast.makeText(this, "no accelmeter",
-                    Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
+        TextView tv = (TextView) findViewById(R.id.vx_content);
+        tv.setText("ああああ");
+
+        RunSensor.getInstance().onCreate(this);
+
+        Intent intent = new Intent(this, InitActivity.class);
+//        intent.putExtra("request", request);
+        startActivityForResult(intent, MYREQCODE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "onResume");
-        sensorMgr.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+        RunSensor.getInstance().onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.i(TAG, "onPause");
-        sensorMgr.unregisterListener(this);
+        RunSensor.getInstance().onPause();
+    }
+
+    @Override
+    protected void onActivityResult(int reqCode, int resCode, Intent data) {
+        super.onActivityResult(reqCode, resCode, data);
+        switch (reqCode) {
+            case MYREQCODE:
+                if (resCode == RESULT_OK) {
+                    String feel = data.getStringExtra("feel");
+                    TextView text = (TextView) findViewById(R.id.vx_content);
+                    text.setText(feel);
+                }
+        }
     }
 
     @Override
@@ -137,20 +155,5 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        vx = (int)event.values[0]*100;
-        vy = (int)event.values[1]*100;
-        vz = (int)event.values[2]*100;
-        Log.d(TAG, vx + ", "+ vy + ", "+vz);
-        TextView vx_view = (TextView) findViewById(R.id.vx_content);
-        vx_view.setText("vx: "+vx);
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 }

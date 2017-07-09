@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="jp.ac.titech.itpro.sdl.runmusic.MainActivity"
-    tools:showIn="@layout/app_bar_main"
+    tools:context="jp.ac.titech.itpro.sdl.runmusic.InitActivity"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -27,46 +25,41 @@
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginTop="16dp"
-            android:text="感情"
+            android:text="@string/vx_text"
             android:textAlignment="center"
             android:textSize="24dp" />
 
-        <Button
-            android:id="@+id/change_feel_button"
+        <ImageButton
+            android:id="@+id/imageButton1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:text="気分を変える" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="0dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:text="ランニングを始める"
-            android:textAlignment="center"
-            android:textSize="18dp" />
+            android:adjustViewBounds="true"
+            android:background="#fff"
+            android:elevation="8dp"
+            android:maxHeight="300dp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/feeling_img01"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="45dp"
+            android:onClick="onClickFeelingButton" />
 
-        <Button
-            android:id="@+id/start_run_button"
+        <ImageButton
+            android:id="@+id/imageButton2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:text="スタート" />
-
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:adjustViewBounds="true"
+            android:background="#fff"
+            android:elevation="8dp"
+            android:maxHeight="300dp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/feeling_img02"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="45dp"
+            android:onClick="onClickFeelingButton" />
     </LinearLayout>
-
 
 </LinearLayout>
