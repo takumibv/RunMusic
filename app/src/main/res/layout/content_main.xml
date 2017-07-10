@@ -74,7 +74,7 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:text="@string/start"
-            android:onClick="onClickStartButton"/>
+            android:onClick="onClickStartButton2"/>
 
     </LinearLayout>
 
