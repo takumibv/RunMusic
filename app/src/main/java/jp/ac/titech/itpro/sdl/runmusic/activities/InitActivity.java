@@ -1,10 +1,13 @@
-package jp.ac.titech.itpro.sdl.runmusic;
+package jp.ac.titech.itpro.sdl.runmusic.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
+import jp.ac.titech.itpro.sdl.runmusic.R;
+
 
 public class InitActivity extends AppCompatActivity {
     private final static String TAG = "InitActivity";

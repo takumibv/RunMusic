@@ -7,6 +7,10 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
+import java.util.ArrayList;
+
+import jp.ac.titech.itpro.sdl.runmusic.activities.MainActivity;
+
 /**
  * Created by couchpotatobv on 2017/07/09.
  */
@@ -19,6 +23,11 @@ public class RunSensor implements SensorEventListener {
     private SensorManager sensorMgr;
     private Sensor runCounter;
     private Context context;
+
+    double vx=0, vy=0, vz=0;
+    ArrayList<Double> data = new ArrayList<Double>();
+    private final static int DATA_SIZE = 500;
+    double mean = 0;
 
     private RunSensor(){}
 
@@ -33,6 +42,9 @@ public class RunSensor implements SensorEventListener {
     }
 
     public void onResume(){
+        if(sensorMgr == null){
+            return;
+        }
         runCounter = sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 //        runCounter = sensorMgr.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
 //        if (accelerometer == null) {
@@ -64,14 +76,27 @@ public class RunSensor implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float vx = event.values[0];
-        float vy = event.values[1];
-        float vz = event.values[2];
-        float para = Math.abs(vx*vy*vz);
-        Log.d(TAG, "onSensorChanged:"+(int)para);
+        double vx_df = vx - event.values[0];
+        double vy_df = vy - event.values[1];
+        double vz_df = vz - event.values[2];
+
+        vx = event.values[0];
+        vy = event.values[1];
+        vz = event.values[2];
+
+        double para = Math.sqrt(Math.pow(vx_df, 2)+Math.pow(vy_df, 2)+Math.pow(vz_df, 2));
+        data.add(para);
+        if(data.size() > DATA_SIZE){
+            data.remove(0);
+            double sum = 0;
+            for(int i = 1; i < data.size(); i++) sum += data.get(i);
+            mean = sum / data.size();
+        }
+        Log.d(TAG, "onSensorChanged:"+(int)(para*100));
 //        TextView tv = (TextView) context.findViewById(R.id.vx_content);
 //        Log.d(TAG, tv.toString());
 //        tv.setText(vx);
+        ((MainActivity)context).onSensorChanged(""+para+" : "+mean+" : "+data.size());
     }
 
     @Override

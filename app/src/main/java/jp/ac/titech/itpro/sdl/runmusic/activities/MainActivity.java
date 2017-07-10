@@ -1,13 +1,9 @@
-package jp.ac.titech.itpro.sdl.runmusic;
+package jp.ac.titech.itpro.sdl.runmusic.activities;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -21,14 +17,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
+import java.io.File;
 import java.util.ArrayList;
 
-import static android.content.Context.SENSOR_SERVICE;
-import static java.lang.Math.*;
+import jp.ac.titech.itpro.sdl.runmusic.R;
+import jp.ac.titech.itpro.sdl.runmusic.RunSensor;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -36,6 +30,11 @@ public class MainActivity extends AppCompatActivity
     private final static String TAG = "MainActivity";
     private final static int MYREQCODE = 1234;
     private final ArrayList<String> feeling_list = new ArrayList<String>();
+
+    private String feel;
+
+    private MediaPlayer mp;
+    private String path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,14 +62,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        TextView tv = (TextView) findViewById(R.id.vx_content);
-        tv.setText("ああああ");
+//        RunSensor.getInstance().onCreate(this);
 
-        RunSensor.getInstance().onCreate(this);
+//        if(feel == null) showInit();
 
-        Intent intent = new Intent(this, InitActivity.class);
-//        intent.putExtra("request", request);
-        startActivityForResult(intent, MYREQCODE);
     }
 
     @Override
@@ -87,13 +82,53 @@ public class MainActivity extends AppCompatActivity
         RunSensor.getInstance().onPause();
     }
 
+    public void showInit(){
+        Intent intent = new Intent(this, InitActivity.class);
+//        intent.putExtra("request", request);
+        startActivityForResult(intent, MYREQCODE);
+    }
+
+    public void onClickChangeFeelButton(View v){
+        showInit();
+    }
+
+    public void onClickStartButton(View v){
+        Log.d(TAG, Environment.getExternalStorageDirectory().getPath());
+        path = Environment.getExternalStorageDirectory().getPath();
+        File dir = new File(path+"/Music/");
+        File file = new File(dir.getAbsolutePath()+"/phatmans/過去現在未来進行形/02 過去現在未来進行形.mp3");
+
+        String m_path = dir.getAbsolutePath()+"/phatmans/過去現在未来進行形/02 過去現在未来進行形.mp3";
+        //リソースファイルから再生
+        mp = new MediaPlayer();
+        try {
+            mp.setDataSource(m_path);
+            mp.prepare();
+            mp.start();
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+//        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://techbooster.org/"));
+
+    }
+
+    public void onSensorChanged(String txt){
+        TextView tv = (TextView) findViewById(R.id.param);
+        tv.setText(txt);
+    }
+
+    public void onDecideBPM(int bpm){
+
+    }
+
     @Override
     protected void onActivityResult(int reqCode, int resCode, Intent data) {
         super.onActivityResult(reqCode, resCode, data);
         switch (reqCode) {
             case MYREQCODE:
                 if (resCode == RESULT_OK) {
-                    String feel = data.getStringExtra("feel");
+                    feel = data.getStringExtra("feel");
                     TextView text = (TextView) findViewById(R.id.vx_content);
                     text.setText(feel);
                 }

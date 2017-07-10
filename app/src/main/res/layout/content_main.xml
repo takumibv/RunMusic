@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="jp.ac.titech.itpro.sdl.runmusic.MainActivity"
+    tools:context="jp.ac.titech.itpro.sdl.runmusic.activities.MainActivity"
     tools:showIn="@layout/app_bar_main"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -37,7 +37,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:text="気分を変える" />
+            android:text="@string/change_feel"
+            android:onClick="onClickChangeFeelButton"/>
 
     </LinearLayout>
 
@@ -54,9 +55,17 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:text="ランニングを始める"
+            android:text="@string/start_run"
             android:textAlignment="center"
             android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/param"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="param"
+            android:textAlignment="center"
+            android:textSize="12dp" />
 
         <Button
             android:id="@+id/start_run_button"
@@ -64,7 +73,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:text="スタート" />
+            android:text="@string/start"
+            android:onClick="onClickStartButton"/>
 
     </LinearLayout>
 

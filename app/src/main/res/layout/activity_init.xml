@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="jp.ac.titech.itpro.sdl.runmusic.InitActivity"
+    tools:context="jp.ac.titech.itpro.sdl.runmusic.activities.InitActivity"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -27,7 +27,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/vx_text"
             android:textAlignment="center"
-            android:textSize="24dp" />
+            android:textSize="28dp" />
 
         <ImageButton
             android:id="@+id/imageButton1"

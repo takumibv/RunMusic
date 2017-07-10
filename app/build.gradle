@@ -19,6 +19,8 @@ android {
     }
 }
 
+final APPCOMPAT_VERSION = '24.2.1'
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -28,5 +30,9 @@ dependencies {
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile "com.android.support:design:$APPCOMPAT_VERSION"
+    compile "com.android.support:recyclerview-v7:$APPCOMPAT_VERSION"
+    compile "com.android.support:percent:$APPCOMPAT_VERSION"
+    compile "com.github.andremion:musiccoverview:1.0.0"
     testCompile 'junit:junit:4.12'
 }
