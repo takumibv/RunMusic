@@ -8,6 +8,7 @@
     android:transitionGroup="true">
 
     <LinearLayout
+        android:id="@+id/music_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -20,7 +21,14 @@
             android:layout_width="@dimen/cover_size_mini"
             android:layout_height="@dimen/cover_size_mini"
             android:scaleType="centerCrop"
-            tools:src="@drawable/album_cover_daft_punk" />
+            tools:src="@drawable/album_cover_default"
+            android:transitionName="@string/transition_name_cover"/>
+
+        <TextView
+            android:id="@+id/album_cover_path"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -34,7 +42,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:transitionName="@string/transition_name_title"/>
 
             <TextView
                 android:id="@+id/artist"
@@ -50,7 +59,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/inner_padding"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:transitionName="@string/transition_name_duration"/>
     </LinearLayout>
 
 </FrameLayout>

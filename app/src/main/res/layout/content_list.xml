@@ -7,11 +7,18 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
+    <TextView
+        android:id="@+id/duration_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="335"/>
+
     <com.andremion.music.MusicCoverView
         android:id="@+id/cover"
         android:layout_width="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/album_cover_daft_punk"
+        android:src="@drawable/album_cover_default"
         android:transitionName="@string/transition_name_cover"
         app:layout_heightPercent="35%"/>
 
@@ -90,7 +97,7 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="My favorites"
+            android:text="Song List"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
 
         <TextView

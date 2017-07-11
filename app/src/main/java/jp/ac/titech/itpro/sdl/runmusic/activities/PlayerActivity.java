@@ -28,6 +28,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateUtils;
+import android.view.View;
 import android.widget.TextView;
 
 import jp.ac.titech.itpro.sdl.runmusic.R;
@@ -41,6 +42,7 @@ public abstract class PlayerActivity extends AppCompatActivity {
     private boolean mBound = false;
     private TextView mTimeView;
     private TextView mDurationView;
+    private TextView mDurationValueView;
     private ProgressView mProgressView;
     private final Handler mUpdateProgressHandler = new Handler() {
         @Override
@@ -61,6 +63,7 @@ public abstract class PlayerActivity extends AppCompatActivity {
             // We've bound to PlayerService, cast the IBinder and get PlayerService instance
             PlayerService.LocalBinder binder = (PlayerService.LocalBinder) service;
             mService = binder.getService();
+            mService.setDuration(Integer.parseInt((String)mDurationValueView.getText()));
             mBound = true;
             onBind();
         }
@@ -84,6 +87,18 @@ public abstract class PlayerActivity extends AppCompatActivity {
         }
     }
 
+    public void setDuration(int duration){
+        mDurationView.setText(DateUtils.formatElapsedTime(duration));
+        mDurationValueView.setText(duration+"");
+    }
+
+    public int getPosition(){
+        return mService.getPosition();
+    }
+    public int getDuration(){
+        return mService.getDuration();
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +112,7 @@ public abstract class PlayerActivity extends AppCompatActivity {
         super.setContentView(layoutResID);
         mTimeView = (TextView) findViewById(R.id.time);
         mDurationView = (TextView) findViewById(R.id.duration);
+        mDurationValueView = (TextView) findViewById(R.id.duration_value);
         mProgressView = (ProgressView) findViewById(R.id.progress);
     }
 

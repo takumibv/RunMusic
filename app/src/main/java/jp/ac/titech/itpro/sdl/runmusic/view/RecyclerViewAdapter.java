@@ -16,6 +16,8 @@
 
 package jp.ac.titech.itpro.sdl.runmusic.view;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -24,9 +26,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 import jp.ac.titech.itpro.sdl.runmusic.R;
+import jp.ac.titech.itpro.sdl.runmusic.activities.RunningActivity;
 import jp.ac.titech.itpro.sdl.runmusic.music.MusicContent.MusicItem;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
@@ -52,10 +57,25 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.mArtistView.setText(holder.mItem.getArtist());
         holder.mDurationView.setText(DateUtils.formatElapsedTime(holder.mItem.getDuration()));
 
+        String album_art_path = holder.mItem.getmAlbumArtPath();
+        holder.mCoverPathView.setText(holder.mItem.getmAlbumArtPath());
+        if(album_art_path != ""){
+            File file = new File(album_art_path);
+            if(file.exists()){
+                Bitmap bm = BitmapFactory.decodeFile(file.getPath());
+                holder.mCoverView.setImageBitmap(bm);
+            }
+        }
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Nothing to do
+                HashMap<String, String> options = new HashMap<String, String>();
+                options.put("cover_path", holder.mItem.getmAlbumArtPath());
+                options.put("title", holder.mItem.getTitle());
+                options.put("artist", holder.mItem.getArtist());
+                options.put("duration", holder.mItem.getDuration()+"");
+                ((RunningActivity)v.getContext()).onClickListItem(v, options);
             }
         });
     }
@@ -68,6 +88,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final ImageView mCoverView;
+        public final TextView mCoverPathView;
         public final TextView mTitleView;
         public final TextView mArtistView;
         public final TextView mDurationView;
@@ -80,6 +101,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             mTitleView = (TextView) view.findViewById(R.id.title);
             mArtistView = (TextView) view.findViewById(R.id.artist);
             mDurationView = (TextView) view.findViewById(R.id.duration);
+            mCoverPathView = (TextView) view.findViewById(R.id.album_cover_path);
         }
     }
 

@@ -1,31 +1,31 @@
 package jp.ac.titech.itpro.sdl.runmusic.activities;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
 
 import jp.ac.titech.itpro.sdl.runmusic.R;
 import jp.ac.titech.itpro.sdl.runmusic.RunSensor;
+import jp.ac.titech.itpro.sdl.runmusic.view.GraphView;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "MainActivity";
     private final static int MYREQCODE = 1234;
@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity
     private MediaPlayer mp;
     private String path;
 
+    private GraphView gView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,28 +46,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawer.setDrawerListener(toggle);
-//        toggle.syncState();
-
-//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-//        navigationView.setNavigationItemSelectedListener(this);
-
-//        RunSensor.getInstance().onCreate(this);
-
-//        if(feel == null) showInit();
-
+        gView = (GraphView) findViewById(R.id.graph_view);
+        RunSensor.getInstance().onCreate(this);
     }
 
     @Override
@@ -92,7 +74,7 @@ public class MainActivity extends AppCompatActivity
         showInit();
     }
 
-    public void onClickStartButton(View v){
+    public void onClickStartButton2(View v){
         Log.d(TAG, Environment.getExternalStorageDirectory().getPath());
         path = Environment.getExternalStorageDirectory().getPath();
         File dir = new File(path+"/Music/");
@@ -104,16 +86,46 @@ public class MainActivity extends AppCompatActivity
         try {
             mp.setDataSource(m_path);
             mp.prepare();
+            Log.d(TAG, "music: "+mp.getDuration()+", "+mp.getTrackInfo()[0]+", ");
 //            mp.start();
 
         } catch (Exception e){
             e.printStackTrace();
         }
-//        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://techbooster.org/"));
+
+//        ContentResolver resolver = getContentResolver();
+//        Cursor cursor = resolver.query(
+//            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI ,  //データの種類
+//            null , //取得する項目 nullは全部
+//            null , //フィルター条件 nullはフィルタリング無し
+//            null , //フィルター用のパラメータ
+//            null   //並べ替え
+//        );
+//        Log.d( "TEST" , Arrays.toString( cursor.getColumnNames() ) );  //項目名の一覧を出力
+//        Log.d( "TEST" , cursor.getCount() + "" ); //取得できた件数を表示
+//        Log.d( "TEST" , MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "" );
+//
+//        while( cursor.moveToNext() ){
+//            Log.d("TEST" , "====================================");
+//            Log.d("TEST" , cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media.ALBUM ) ) ); //アルバム名の取得
+//            Log.d("TEST" , cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media.ARTIST ) ) ); //アーティスト名の取得
+//            Log.d("TEST" , cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media.TITLE ) ) ); //タイトルの取得
+//            Cursor albumCursor = getContentResolver().query(
+//                    MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+//                    null,
+//                    MediaStore.Audio.Albums._ID + "=?",
+//                    new String[]{ cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media.ALBUM_ID ) ) },
+//                    null);
+//            if (albumCursor.moveToFirst())
+//                Log.d("TEST" , albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) ) ); //タイトルの取得
+//        }
+
+        Intent intent = new Intent(this, RunningActivity.class);
+        startActivity(intent);
 
     }
 
-    public void onClickStartButton2(View v){
+    public void onClickStartButton(View v){
         Intent intent = new Intent(this, RunningActivity.class);
         startActivity(intent);
     }
@@ -125,6 +137,11 @@ public class MainActivity extends AppCompatActivity
 
     public void onDecideBPM(int bpm){
 
+    }
+
+    public void onGraphUpdate(double vx){
+//        gView.addData((float)vx, true);
+        gView.updateData((float)vx, true);
     }
 
     @Override
@@ -142,58 +159,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        super.onBackPressed();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 }

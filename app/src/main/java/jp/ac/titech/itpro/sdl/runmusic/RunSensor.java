@@ -5,11 +5,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
 import android.util.Log;
 
 import java.util.ArrayList;
 
 import jp.ac.titech.itpro.sdl.runmusic.activities.MainActivity;
+import jp.ac.titech.itpro.sdl.runmusic.view.GraphView;
 
 /**
  * Created by couchpotatobv on 2017/07/09.
@@ -29,6 +31,10 @@ public class RunSensor implements SensorEventListener {
     private final static int DATA_SIZE = 500;
     double mean = 0;
 
+    private final static long GRAPH_REFRESH_WAIT_MS = 20;
+    private GraphRefreshThread th = null;
+    private Handler handler;
+
     private RunSensor(){}
 
     public static RunSensor getInstance(){
@@ -39,6 +45,8 @@ public class RunSensor implements SensorEventListener {
         this.context = context;
         sensorMgr = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         this.onResume();
+
+        handler = new Handler();
     }
 
     public void onResume(){
@@ -57,6 +65,9 @@ public class RunSensor implements SensorEventListener {
             return;
         }
         this.setRunCounterListener();
+
+        th = new GraphRefreshThread();
+        th.start();
     }
 
     public void onPause(){
@@ -64,6 +75,8 @@ public class RunSensor implements SensorEventListener {
             return;
         }
         this.removeRunCounterListener();
+
+        th = null;
     }
 
     public void setRunCounterListener(){
@@ -92,7 +105,7 @@ public class RunSensor implements SensorEventListener {
             for(int i = 1; i < data.size(); i++) sum += data.get(i);
             mean = sum / data.size();
         }
-        Log.d(TAG, "onSensorChanged:"+(int)(para*100));
+//        Log.d(TAG, "onSensorChanged:"+(int)(para*100));
 //        TextView tv = (TextView) context.findViewById(R.id.vx_content);
 //        Log.d(TAG, tv.toString());
 //        tv.setText(vx);
@@ -102,5 +115,26 @@ public class RunSensor implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    private class GraphRefreshThread extends Thread {
+        public void run() {
+            try {
+                while (th != null) {
+                    handler.post(new Runnable() {
+                        public void run() {
+//                            rateView.setText(String.format(Locale.getDefault(), "%f", rate));
+//                            accuracyView.setText(String.format(Locale.getDefault(), "%d", accuracy));
+                            ((MainActivity)context).onGraphUpdate(vx);
+                        }
+                    });
+                    Thread.sleep(GRAPH_REFRESH_WAIT_MS);
+                }
+            }
+            catch (InterruptedException e) {
+                Log.e(TAG, e.toString());
+                th = null;
+            }
+        }
     }
 }

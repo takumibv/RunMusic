@@ -17,9 +17,20 @@
 package jp.ac.titech.itpro.sdl.runmusic.activities;
 
 import com.andremion.music.MusicCoverView;
+
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.transition.Transition;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import java.io.File;
 
 import jp.ac.titech.itpro.sdl.runmusic.R;
 import jp.ac.titech.itpro.sdl.runmusic.view.TransitionAdapter;
@@ -27,6 +38,10 @@ import jp.ac.titech.itpro.sdl.runmusic.view.TransitionAdapter;
 public class DetailActivity extends PlayerActivity {
 
     private MusicCoverView mCoverView;
+    private TextView mCoverPathView;
+    private LinearLayout mTitle;
+
+    private Intent response_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +49,39 @@ public class DetailActivity extends PlayerActivity {
         setContentView(R.layout.content_detail);
 
         mCoverView = (MusicCoverView) findViewById(R.id.cover);
+        mCoverPathView = (TextView) findViewById(R.id.album_cover_path);
+        mTitle = (LinearLayout) findViewById(R.id.title);
+
+        Intent i = getIntent();
+        String title = i.getStringExtra("title");
+        String artist = i.getStringExtra("artist");
+        String cover_path = i.getStringExtra("cover_path");
+
+        if(title != null) ((TextView)mTitle.getChildAt(0)).setText(title);
+        if(artist != null) ((TextView)mTitle.getChildAt(2)).setText(artist);
+        if(i.getStringExtra("duration") != null){
+            int duration = Integer.parseInt(i.getStringExtra("duration"));
+            setDuration(duration);
+        }
+        if(cover_path != "" && cover_path != null){
+            File file = new File(cover_path);
+            if(file.exists()){
+                Bitmap bm = BitmapFactory.decodeFile(file.getPath());
+                mCoverView.setImageBitmap(bm);
+            }
+        }
+
+        response_data = new Intent();
+        response_data.putExtra("title", title);
+        response_data.putExtra("artist", artist);
+        response_data.putExtra("cover_path", cover_path);
+        setResult(RESULT_OK, response_data);
+
         mCoverView.setCallbacks(new MusicCoverView.Callbacks() {
             @Override
             public void onMorphEnd(MusicCoverView coverView) {
                 // Nothing to do
+                Log.d("coverView", coverView+"") ;
             }
 
             @Override
@@ -62,6 +106,8 @@ public class DetailActivity extends PlayerActivity {
 
     public void onFabClick(View view) {
         pause();
+        response_data.putExtra("position", getPosition());
+        response_data.putExtra("duration", getDuration());
         mCoverView.stop();
     }
 

@@ -25,13 +25,17 @@ import android.util.Log;
 public class PlayerService extends Service {
 
     private static final String TAG = PlayerService.class.getSimpleName();
-    private static final int DURATION = 335;
+    private static int DURATION = 335;
 
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
     private Worker mWorker;
 
     public PlayerService() {
+    }
+
+    public void setDuration(int duration){
+        DURATION = duration;
     }
 
     @Override
@@ -54,6 +58,14 @@ public class PlayerService extends Service {
         } else {
             mWorker.doResume();
         }
+    }
+
+    public void play_new(){
+        if (mWorker != null) {
+            mWorker.interrupt();
+        }
+        mWorker = null;
+        play();
     }
 
     public boolean isPlaying() {
@@ -101,6 +113,7 @@ public class PlayerService extends Service {
         }
 
         void doPause() {
+            Log.d(TAG, "Player Paused"+paused);
             paused = true;
         }
 

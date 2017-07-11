@@ -39,12 +39,22 @@ public class MusicContent {
         private final String mTitle;
         private final String mArtist;
         private final long mDuration;
+        private final String mAlbumArtPath;
 
         public MusicItem(int cover, String title, String artist, long duration) {
             mCover = cover;
             mTitle = title;
             mArtist = artist;
             mDuration = duration;
+            mAlbumArtPath = "";
+        }
+
+        public MusicItem(int cover, String title, String artist, long duration, String album_art) {
+            mCover = cover;
+            mTitle = title;
+            mArtist = artist;
+            mDuration = duration;
+            mAlbumArtPath = album_art;
         }
 
         public int getCover() {
@@ -62,5 +72,7 @@ public class MusicContent {
         public long getDuration() {
             return mDuration;
         }
+
+        public String getmAlbumArtPath(){ return mAlbumArtPath; }
     }
 }
