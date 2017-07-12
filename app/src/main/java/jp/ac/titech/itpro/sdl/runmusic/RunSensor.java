@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import jp.ac.titech.itpro.sdl.runmusic.activities.MainActivity;
 import jp.ac.titech.itpro.sdl.runmusic.view.GraphView;
@@ -26,12 +27,23 @@ public class RunSensor implements SensorEventListener {
     private Sensor runCounter;
     private Context context;
 
-    double vx=0, vy=0, vz=0;
-    ArrayList<Double> data = new ArrayList<Double>();
-    private final static int DATA_SIZE = 500;
+    private double vx=0, vy=0, vz=0;
+    private ArrayList<Double> data = new ArrayList<Double>();
+    private int plus_minus = 0; // -1:負, 1:正
+    private int times = 0;
+    private Boolean is_valid = false;
+    private final static int MAX_TRY_TIME = 3;
+    ArrayList<Long> point_time = new ArrayList<Long>();
+    private final static int POINT_VALID_SIZE = 5;
+    private final static int DATA_SIZE = 200;
     double mean = 0;
 
-    private final static long GRAPH_REFRESH_WAIT_MS = 20;
+    private final static int BPM_DECIDE_COUNT = 3;
+    private final static int VALID_BPM_BAND = 10;
+    private int prev_bpm = 0;
+    private int bpm_d_count = 0;
+
+    private final static long GRAPH_REFRESH_WAIT_MS = 10;
     private GraphRefreshThread th = null;
     private Handler handler;
 
@@ -105,11 +117,72 @@ public class RunSensor implements SensorEventListener {
             for(int i = 1; i < data.size(); i++) sum += data.get(i);
             mean = sum / data.size();
         }
+        int bpm = calcBpm();
 //        Log.d(TAG, "onSensorChanged:"+(int)(para*100));
 //        TextView tv = (TextView) context.findViewById(R.id.vx_content);
 //        Log.d(TAG, tv.toString());
 //        tv.setText(vx);
         ((MainActivity)context).onSensorChanged(""+para+" : "+mean+" : "+data.size());
+        if(bpm > 0 && bpm_d_count > BPM_DECIDE_COUNT ) ((MainActivity)context).onDecideBPM(bpm);
+    }
+
+    public int calcBpm(){
+        if(data.size() != DATA_SIZE) return 0;
+
+        int bpm = 0;
+
+        if(data.get(DATA_SIZE-1) - mean > 0){
+            if(plus_minus == 1){
+                times++;
+                if(times > MAX_TRY_TIME) is_valid = true;
+            } else if(plus_minus == -1 && is_valid){
+                bpm = updateBPM(new Date().getTime());
+                plus_minus = 1;
+                times = 0;
+                is_valid = false;
+            } else {
+                plus_minus = 1;
+                times = 0;
+            }
+        }else{
+            if(plus_minus == -1){
+                times++;
+                if(times > MAX_TRY_TIME) is_valid = true;
+            } else if(plus_minus == 1 && is_valid){
+                bpm = updateBPM(new Date().getTime());
+                plus_minus = -1;
+                times = 0;
+                is_valid = false;
+            } else {
+                plus_minus = -1;
+                times = 0;
+            }
+        }
+
+        return bpm;
+    }
+
+    public int updateBPM(Long time){
+        point_time.add(time);
+        if(point_time.size() > POINT_VALID_SIZE) point_time.remove(0);
+        int bpm = 0;
+        int mean = 0;
+        for(int i=0; i<point_time.size()-1; i++){
+            long a = point_time.get(i+1) - point_time.get(i);
+            mean += a;
+        }
+        if(point_time.size() > 1) mean /= (point_time.size()-1);
+        if(mean != 0) bpm = 30000 / mean ;
+        if(bpm < prev_bpm + VALID_BPM_BAND/2 && bpm > prev_bpm -VALID_BPM_BAND/2 ){
+            bpm_d_count++;
+        }else{
+            bpm_d_count = 0;
+        }
+        prev_bpm = bpm;
+
+        ((MainActivity)context).onUpdateBPM(bpm);
+
+        return bpm;
     }
 
     @Override
@@ -125,7 +198,7 @@ public class RunSensor implements SensorEventListener {
                         public void run() {
 //                            rateView.setText(String.format(Locale.getDefault(), "%f", rate));
 //                            accuracyView.setText(String.format(Locale.getDefault(), "%d", accuracy));
-                            ((MainActivity)context).onGraphUpdate(vx);
+                            if(data.size() > 0) ((MainActivity)context).onGraphUpdate(data.get(data.size() - 1));
                         }
                     });
                     Thread.sleep(GRAPH_REFRESH_WAIT_MS);

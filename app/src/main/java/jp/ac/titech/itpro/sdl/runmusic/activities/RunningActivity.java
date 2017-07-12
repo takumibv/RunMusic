@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
@@ -43,6 +44,7 @@ import jp.ac.titech.itpro.sdl.runmusic.view.RecyclerViewAdapter;
 
 public class RunningActivity extends PlayerActivity {
     private static final int ACTIVITY_CODE = 1111;
+    private final static String TAG = "RunningActivity";
 
     private View mCoverView;
     private View mTitleView;
@@ -51,12 +53,18 @@ public class RunningActivity extends PlayerActivity {
     private View mProgressView;
     private View mFabView;
 
+    private String now_id;
+    private String now_title;
+    private String now_artist;
+    private String now_cover_path;
+    private int now_duration;
+    private int now_position;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_list);
 
-        //
         mCoverView = findViewById(R.id.cover);
         mTitleView = findViewById(R.id.title);
         mTimeView = findViewById(R.id.time);
@@ -113,8 +121,14 @@ public class RunningActivity extends PlayerActivity {
         TextView mCounter = (TextView) findViewById(R.id.counter);
         mCounter.setText(musics.size() + " songs");
 
-//        onFabClick(((RecyclerView) findViewById(R.id.tracks)).getChildAt(0));
-        Log.d("tagg",recyclerView.getChildAt(0)+"");
+        MusicContent.MusicItem m = musics.get(0);
+        now_id = m.getmId();
+        now_title = m.getTitle();
+        now_artist = m.getArtist();
+        now_cover_path = m.getmAlbumArtPath();
+        now_duration = (int)m.getDuration();
+        now_position = 0;
+        setNowView();
     }
 
     @Override
@@ -122,30 +136,40 @@ public class RunningActivity extends PlayerActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case ACTIVITY_CODE:
-                if (requestCode == RESULT_OK) {
-                    String title = data.getStringExtra("title");
-                    String artist = data.getStringExtra("artist");
-                    String cover_path = data.getStringExtra("cover_path");
-                    int duration = Integer.parseInt(data.getStringExtra("duration"));
-                    int position = Integer.parseInt(data.getStringExtra("position"));
-                    ((TextView)((LinearLayout)mTitleView).getChildAt(0)).setText(title);
-                    ((TextView)((LinearLayout)mTitleView).getChildAt(1)).setText(artist);
-                    if(cover_path != "" && cover_path != null){
-                        File file = new File(cover_path);
-                        if(file.exists()){
-                            Bitmap bm = BitmapFactory.decodeFile(file.getPath());
-                            ((ImageView)mCoverView).setImageBitmap(bm);
-                        }
-                    }
-                    ((TextView)mTimeView).setText(DateUtils.formatElapsedTime(position));
-                    ((TextView)mDurationView).setText(DateUtils.formatElapsedTime(duration));
-                    ((TextView)findViewById(R.id.duration_value)).setText(duration+"");
-                    ((ProgressView)mProgressView).setProgress(position);
+                if (resultCode == RESULT_OK) {
+                    now_id = data.getStringExtra("id");
+                    now_title = data.getStringExtra("title");
+                    now_artist = data.getStringExtra("artist");
+                    now_cover_path = data.getStringExtra("cover_path");
+                    now_duration = Integer.parseInt(data.getStringExtra("duration"));
+                    now_position = Integer.parseInt(data.getStringExtra("position"));
+                    setNowView();
                 }
         }
     }
 
+    public void setNowView(){
+        ((TextView)((LinearLayout)mTitleView).getChildAt(0)).setText(now_title);
+        ((TextView)((LinearLayout)mTitleView).getChildAt(2)).setText(now_artist);
+        if(now_cover_path != "" && now_cover_path != null){
+            File file = new File(now_cover_path);
+            if(file.exists()){
+                Bitmap bm = BitmapFactory.decodeFile(file.getPath());
+                ((ImageView)mCoverView).setImageBitmap(bm);
+            }else{
+                ((ImageView)mCoverView).setImageResource(R.drawable.album_cover_default);
+            }
+        } else {
+            ((ImageView)mCoverView).setImageResource(R.drawable.album_cover_default);
+        }
+        ((TextView)mTimeView).setText(DateUtils.formatElapsedTime(now_position));
+        ((TextView)mDurationView).setText(DateUtils.formatElapsedTime(now_duration));
+        ((TextView)findViewById(R.id.duration_value)).setText(now_duration+"");
+        ((ProgressView)mProgressView).setProgress(now_position);
+    }
+
     public void onFabClick(View view) {
+        Log.d(TAG, "onFabClick");
         //noinspection unchecked
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,
                 new Pair<>(mCoverView, ViewCompat.getTransitionName(mCoverView)),
@@ -154,7 +178,13 @@ public class RunningActivity extends PlayerActivity {
                 new Pair<>(mDurationView, ViewCompat.getTransitionName(mDurationView)),
                 new Pair<>(mProgressView, ViewCompat.getTransitionName(mProgressView)),
                 new Pair<>(mFabView, ViewCompat.getTransitionName(mFabView)));
-        ActivityCompat.startActivity(this, new Intent(this, DetailActivity.class), options.toBundle());
+        Intent d_activity = new Intent(this, DetailActivity.class);
+        d_activity.putExtra("title", now_title);
+        d_activity.putExtra("artist", now_artist);
+        d_activity.putExtra("id", now_id);
+        d_activity.putExtra("cover_path", now_cover_path);
+        d_activity.putExtra("duration", now_duration+"");
+        ActivityCompat.startActivity(this, d_activity, options.toBundle());
     }
 
     public void onClickListItem(View v, HashMap<String, String> ops){
@@ -173,6 +203,7 @@ public class RunningActivity extends PlayerActivity {
                 new Pair<>(mProgressView, ViewCompat.getTransitionName(mProgressView)),
                 new Pair<>(mFabView, ViewCompat.getTransitionName(mFabView)));
         Intent d_activity = new Intent(this, DetailActivity.class);
+        d_activity.putExtra("play_new", "true");
         for (Map.Entry<String, String> entry : ops.entrySet()) {
             d_activity.putExtra(entry.getKey(), entry.getValue());
         }

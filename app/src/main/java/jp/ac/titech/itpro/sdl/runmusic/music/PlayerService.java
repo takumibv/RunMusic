@@ -18,9 +18,14 @@ package jp.ac.titech.itpro.sdl.runmusic.music;
 
 import android.app.Service;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.util.Log;
+
+import java.io.IOException;
 
 public class PlayerService extends Service {
 
@@ -30,6 +35,8 @@ public class PlayerService extends Service {
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
     private Worker mWorker;
+
+    private MediaPlayer mediaPlayer;
 
     public PlayerService() {
     }
@@ -45,35 +52,51 @@ public class PlayerService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
+        mediaPlayer.stop();
         if (mWorker != null) {
             mWorker.interrupt();
         }
         return super.onUnbind(intent);
     }
 
-    public void play() {
+    public void play(String mid) {
+        Log.d(TAG, "play: "+mid);
         if (mWorker == null) {
-            mWorker = new Worker();
-            mWorker.start();
+            mediaPlayer = new MediaPlayer();
+            try {
+                if(mid != null){
+                    mediaPlayer.setDataSource(getApplicationContext(), Uri.withAppendedPath(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,mid));
+                    mediaPlayer.prepare();
+                }
+                mediaPlayer.start();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+            if(mediaPlayer.isPlaying()) {
+                mWorker = new Worker();
+                mWorker.start();
+            }
         } else {
+            mediaPlayer.start();
             mWorker.doResume();
         }
     }
 
-    public void play_new(){
+    public void play_new(String mid){
         if (mWorker != null) {
             mWorker.interrupt();
         }
         mWorker = null;
-        play();
+        play(mid);
     }
 
     public boolean isPlaying() {
-        return mWorker != null && mWorker.isPlaying();
+        return mWorker != null && mWorker.isPlaying() && mediaPlayer.isPlaying();
     }
 
     public void pause() {
         if (mWorker != null) {
+            mediaPlayer.pause();
             mWorker.doPause();
         }
     }

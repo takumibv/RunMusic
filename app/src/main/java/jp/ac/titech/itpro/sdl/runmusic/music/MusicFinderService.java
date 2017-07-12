@@ -40,6 +40,7 @@ public class MusicFinderService {
         Log.d( "TEST" , MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "" );
 
         while( cursor.moveToNext() ){
+            String id = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media._ID ) );
             String album = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media.ALBUM ) );
             String artist = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media.ARTIST ) );
             String title = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media.TITLE ) );
@@ -60,7 +61,7 @@ public class MusicFinderService {
                 album_art = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
                 Log.d("TEST" ,  album_art);
             }
-            musics.add(new MusicContent.MusicItem(R.drawable.album_cover_death_cab, title+" / "+artist, album, duartion/1000, album_art));
+            musics.add(new MusicContent.MusicItem(id, R.drawable.album_cover_default, title+" / "+artist, album, duartion/1000, album_art));
         }
 
         return musics;

@@ -135,8 +135,13 @@ public class MainActivity extends AppCompatActivity {
         tv.setText(txt);
     }
 
-    public void onDecideBPM(int bpm){
+    public void onUpdateBPM(int bpm){
+        TextView tv2 = (TextView) findViewById(R.id.bpm);
+        tv2.setText("BPM: "+bpm);
+    }
 
+    public void onDecideBPM(int bpm){
+        Log.d(TAG, "onDecideBPM!!!");
     }
 
     public void onGraphUpdate(double vx){

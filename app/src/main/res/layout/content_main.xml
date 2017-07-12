@@ -67,6 +67,14 @@
             android:textAlignment="center"
             android:textSize="12dp" />
 
+        <TextView
+            android:id="@+id/bpm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="param"
+            android:textAlignment="center"
+            android:textSize="32dp" />
+
         <Button
             android:id="@+id/start_run_button"
             android:layout_width="match_parent"

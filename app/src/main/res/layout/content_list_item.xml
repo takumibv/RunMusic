@@ -25,6 +25,11 @@
             android:transitionName="@string/transition_name_cover"/>
 
         <TextView
+            android:id="@+id/music_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+        <TextView
             android:id="@+id/album_cover_path"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -134,8 +134,11 @@ public abstract class PlayerActivity extends AppCompatActivity {
         mUpdateProgressHandler.removeMessages(0);
     }
 
-    public void play() {
-        mService.play();
+    public void play(String mid) {
+        mService.play(mid);
+    }
+    public void play_new(String mid) {
+        mService.play_new(mid);
     }
 
     public void pause() {

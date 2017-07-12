@@ -71,6 +71,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
                 HashMap<String, String> options = new HashMap<String, String>();
+                options.put("id", holder.mItem.getmId());
                 options.put("cover_path", holder.mItem.getmAlbumArtPath());
                 options.put("title", holder.mItem.getTitle());
                 options.put("artist", holder.mItem.getArtist());

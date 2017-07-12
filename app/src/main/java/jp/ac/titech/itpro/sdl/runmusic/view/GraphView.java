@@ -8,6 +8,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import java.util.Date;
+
 /**
  * Created by couchpotatobv on 2017/07/11.
  */
@@ -23,6 +25,9 @@ public class GraphView extends View {
     private int idx = 0;
     private int x0, y0, ewidth;
     private int dw = 5, dh = 1;
+
+    private float val = 0;
+    private final static float alpha = 0.95F;
 
     private final Paint paint = new Paint();
 
@@ -63,12 +68,12 @@ public class GraphView extends View {
         paint.setColor(Color.argb(75, 255, 255, 255));
         paint.setStrokeWidth(1);
         int h = canvas.getHeight();
-        for (int y = y0; y < h; y += dh * 5)
-            canvas.drawLine(x0, y, ewidth, y, paint);
-        for (int y = y0; y > 0; y -= dh * 5)
-            canvas.drawLine(x0, y, ewidth, y, paint);
-        for (int x = x0; x < dw * ndata; x += dw * 5)
-            canvas.drawLine(x, 0, x, h, paint);
+//        for (int y = y0; y < h; y += dh * 5)
+//            canvas.drawLine(x0, y, ewidth, y, paint);
+//        for (int y = y0; y > 0; y -= dh * 5)
+//            canvas.drawLine(x0, y, ewidth, y, paint);
+//        for (int x = x0; x < dw * ndata; x += dw * 5)
+//            canvas.drawLine(x, 0, x, h, paint);
 
 //        // y0 line
         paint.setColor(Color.CYAN);
@@ -99,12 +104,13 @@ public class GraphView extends View {
     }
 
     public double getVibration(int x){
-        return Math.cos(x/5.0)*Math.pow(1.04, -Math.abs(x));
+        return Math.cos(x/5.0)*Math.pow(1.04, -Math.abs(x))*Math.sin(new Date().getTime()/45);
     }
 
     public void updateData(float v, boolean invalidate){
+        val = alpha * val + (1 - alpha) * v;
         for(int i=0; i<NDATA_INIT; i++){
-            vs[i] = (float)getVibration(mathX(i))*v*3;
+            vs[i] = (float)getVibration(mathX(i))*val*3;
         }
         if (invalidate)
             invalidate();

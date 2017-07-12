@@ -31,51 +31,64 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.List;
 
 import jp.ac.titech.itpro.sdl.runmusic.R;
 import jp.ac.titech.itpro.sdl.runmusic.view.TransitionAdapter;
 
 public class DetailActivity extends PlayerActivity {
+    private final static String TAG = "DetailActivity";
 
     private MusicCoverView mCoverView;
     private TextView mCoverPathView;
     private LinearLayout mTitle;
+    private String mId;
+    private Boolean play_new = true;
+    private Boolean is_valid = false;
 
     private Intent response_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
+        Log.d(TAG, "mID: "+mId);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_detail);
 
         mCoverView = (MusicCoverView) findViewById(R.id.cover);
         mCoverPathView = (TextView) findViewById(R.id.album_cover_path);
         mTitle = (LinearLayout) findViewById(R.id.title);
+        is_valid = true;
 
         Intent i = getIntent();
-        String title = i.getStringExtra("title");
-        String artist = i.getStringExtra("artist");
-        String cover_path = i.getStringExtra("cover_path");
+        play_new = Boolean.parseBoolean(i.getStringExtra("play_new"));
+        Log.d(TAG, "play_new: "+ play_new+"");
+//        if(play_new){
+            mId = i.getStringExtra("id");
+            String title = i.getStringExtra("title");
+            String artist = i.getStringExtra("artist");
+            String cover_path = i.getStringExtra("cover_path");
 
-        if(title != null) ((TextView)mTitle.getChildAt(0)).setText(title);
-        if(artist != null) ((TextView)mTitle.getChildAt(2)).setText(artist);
-        if(i.getStringExtra("duration") != null){
-            int duration = Integer.parseInt(i.getStringExtra("duration"));
-            setDuration(duration);
-        }
-        if(cover_path != "" && cover_path != null){
-            File file = new File(cover_path);
-            if(file.exists()){
-                Bitmap bm = BitmapFactory.decodeFile(file.getPath());
-                mCoverView.setImageBitmap(bm);
+            if(title != null) ((TextView)mTitle.getChildAt(0)).setText(title);
+            if(artist != null) ((TextView)mTitle.getChildAt(2)).setText(artist);
+            if(i.getStringExtra("duration") != null){
+                int duration = Integer.parseInt(i.getStringExtra("duration"));
+                setDuration(duration);
             }
-        }
-
-        response_data = new Intent();
-        response_data.putExtra("title", title);
-        response_data.putExtra("artist", artist);
-        response_data.putExtra("cover_path", cover_path);
-        setResult(RESULT_OK, response_data);
+            if(cover_path != "" && cover_path != null){
+                File file = new File(cover_path);
+                if(file.exists()){
+                    Bitmap bm = BitmapFactory.decodeFile(file.getPath());
+                    mCoverView.setImageBitmap(bm);
+                }
+            }
+            response_data = new Intent();
+            response_data.putExtra("id", mId);
+            response_data.putExtra("title", title);
+            response_data.putExtra("artist", artist);
+            response_data.putExtra("cover_path", cover_path);
+            setResult(RESULT_OK, response_data);
+//        }
 
         mCoverView.setCallbacks(new MusicCoverView.Callbacks() {
             @Override
@@ -93,10 +106,29 @@ public class DetailActivity extends PlayerActivity {
         getWindow().getSharedElementEnterTransition().addListener(new TransitionAdapter() {
             @Override
             public void onTransitionEnd(Transition transition) {
-                play();
-                mCoverView.start();
+                if(is_valid){
+                    if(play_new){
+                        play_new(mId);
+                    }else{
+                        play(mId);
+                    }
+                    mCoverView.start();
+                    is_valid = false;
+                }
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        pause();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        play(null);
     }
 
     @Override
@@ -105,9 +137,11 @@ public class DetailActivity extends PlayerActivity {
     }
 
     public void onFabClick(View view) {
+        if(response_data != null){
+            response_data.putExtra("position", getPosition()+"");
+            response_data.putExtra("duration", getDuration()+"");
+        }
         pause();
-        response_data.putExtra("position", getPosition());
-        response_data.putExtra("duration", getDuration());
         mCoverView.stop();
     }
 
