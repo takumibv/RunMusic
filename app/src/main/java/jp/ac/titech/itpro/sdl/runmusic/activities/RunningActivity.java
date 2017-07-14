@@ -1,14 +1,19 @@
 package jp.ac.titech.itpro.sdl.runmusic.activities;
 
+import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
@@ -26,6 +31,7 @@ import android.widget.TextView;
 import org.w3c.dom.Text;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -114,12 +120,19 @@ public class RunningActivity extends PlayerActivity {
 //            musics.add(new MusicContent.MusicItem(R.drawable.album_cover_death_cab, title+" / "+artist, album, duartion/1000, album_art));
 //        }
 
-        List<MusicContent.MusicItem> musics = MusicFinderService.findMusicList(this, "good", 120);
+        Intent intent = getIntent();
+        int bpm = intent.getIntExtra("bpm", 0);
+        String feel = intent.getStringExtra("feel");
+
+        List<MusicContent.MusicItem> musics = MusicFinderService.findMusicList(this, feel, bpm);
 
         RecyclerViewAdapter music_list = new RecyclerViewAdapter(musics);
         recyclerView.setAdapter(music_list);
         TextView mCounter = (TextView) findViewById(R.id.counter);
         mCounter.setText(musics.size() + " songs");
+
+        TextView bpmView = (TextView) findViewById(R.id.bpm);
+        bpmView.setText("BPM: "+ bpm);
 
         MusicContent.MusicItem m = musics.get(0);
         now_id = m.getmId();
@@ -208,6 +221,12 @@ public class RunningActivity extends PlayerActivity {
             d_activity.putExtra(entry.getKey(), entry.getValue());
         }
         ActivityCompat.startActivityForResult(this, d_activity, ACTIVITY_CODE,options.toBundle());
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        finish();
     }
 
 }

@@ -20,25 +20,43 @@
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="0dp">
 
-        <TextView
-            android:id="@+id/vx_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="16dp"
-            android:text="感情"
-            android:textAlignment="center"
-            android:textSize="24dp" />
-
         <Button
             android:id="@+id/change_feel_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:padding="@dimen/feel_field_padding"
             android:text="@string/change_feel"
+            android:textSize="28dp"
+            android:background="@drawable/feel_button_style"
             android:onClick="onClickChangeFeelButton"/>
+
+        <!--<TextView-->
+            <!--android:id="@+id/start_running"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="20dp"-->
+            <!--android:text="@string/start_run"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textSize="40dp" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/param"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text=""-->
+            <!--android:textAlignment="center"-->
+            <!--android:textSize="12dp" />-->
+
+        <TextView
+            android:id="@+id/bpm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:text="@string/start_run"
+            android:textAlignment="center"
+            android:textSize="60dp"/>
 
     </LinearLayout>
 
@@ -46,51 +64,42 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="0dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:text="@string/start_run"
-            android:textAlignment="center"
-            android:textSize="18dp" />
-
-        <TextView
-            android:id="@+id/param"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="param"
-            android:textAlignment="center"
-            android:textSize="12dp" />
-
-        <TextView
-            android:id="@+id/bpm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="param"
-            android:textAlignment="center"
-            android:textSize="32dp" />
+        android:gravity="center_horizontal">
 
         <Button
-            android:id="@+id/start_run_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:id="@+id/start_button"
+            android:layout_width="564dp"
+            android:layout_height="564dp"
             android:text="@string/start"
-            android:onClick="onClickStartButton2"/>
+            android:background="@drawable/wave_content_style"
+            android:textSize="60dp"
+            android:onClick="onClickStartButton" />
+
+        <jp.ac.titech.itpro.sdl.runmusic.view.GraphView
+            android:id="@+id/graph_view"
+            android:layout_width="564dp"
+            android:layout_height="564dp"
+            android:layout_weight="1"
+            android:background="@drawable/wave_content_style"
+            android:visibility="gone"
+            android:onClick="onClickPauseBtn"/>
+
+        <Button
+            android:id="@+id/pause_button"
+            android:layout_width="564dp"
+            android:layout_height="564dp"
+            android:text="一時停止中"
+            android:background="@drawable/wave_content_style"
+            android:textSize="60dp"
+            android:visibility="gone"
+            android:onClick="onClickResumeBtn" />
 
     </LinearLayout>
 
-    <jp.ac.titech.itpro.sdl.runmusic.view.GraphView
-        android:id="@+id/graph_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-
-
+    <!--<Button-->
+        <!--android:id="@+id/start_run_button"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/start"-->
+        <!--android:onClick="onClickStartButton2"/>-->
 </LinearLayout>

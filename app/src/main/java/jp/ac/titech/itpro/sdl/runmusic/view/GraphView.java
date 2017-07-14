@@ -20,6 +20,9 @@ public class GraphView extends View {
     private final static float Ymax = 20;
     private final static int NDATA_INIT = 256;
 
+    private final static int WIDTH_ADJUST = 120;
+    private final static int CENTER_ADJUST = 25;
+
     private int ndata = NDATA_INIT;
     private float[] vs = new float[NDATA_INIT];
     private int idx = 0;
@@ -47,8 +50,9 @@ public class GraphView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         Log.i(TAG, "onSizeChanged: w=" + w + " h=" + h);
+        w -= WIDTH_ADJUST;
         ndata = w / dw;
-        x0 = (w - dw * ndata) / 2;
+        x0 = (w - dw * ndata) / 2 + WIDTH_ADJUST/2;
         y0 = h / 2;
         ewidth = x0 + dw * (ndata - 1);
 
@@ -100,7 +104,7 @@ public class GraphView extends View {
     }
 
     public int mathX(int n){
-        return n - NDATA_INIT/2;
+        return n + CENTER_ADJUST - NDATA_INIT/2;
     }
 
     public double getVibration(int x){
@@ -111,6 +115,7 @@ public class GraphView extends View {
         val = alpha * val + (1 - alpha) * v;
         for(int i=0; i<NDATA_INIT; i++){
             vs[i] = (float)getVibration(mathX(i))*val*3;
+//            vs[i] = mathX(i)/10;
         }
         if (invalidate)
             invalidate();

@@ -1,0 +1,30 @@
+1	160	Beginner	SKE48
+2	160	Blue Sky Blue	Flower
+2	170	Brave Shine 	Aimer
+2	180	CからはじまるABC	忘れらんねえよ
+2	160	Darling	西野カナ
+1	160	Don't Feel,Think!!	氣志團
+1	170	DOWN BEAT STOMP	東京スカパラダイスオーケストラ
+2	180	Foever Friend	D-51
+1	180	LOVE	MACO
+1	170	ring ryour bell	Kalafina
+2	160	Tonight	YUI
+2	170	ありがとう	MACO
+2	180	キヲク	Every Little Thing
+1	170	ゲッタバンバン	佐香智久
+1	180	コネクト	ClaiS
+1	180	コロナ	UVERworld
+2	160	ダビングシーン	indigo la End
+1	160	翼	Ms.OOJA
+2	160	なんだしっ！	クマムシ
+2	160	ひみつをちょーだい	アルルマグナ
+1	160	ビルマニア	吉井和哉
+1	180	ポーカーフェイス	LiSA
+2	160	リアル鬼ごっこ	GLIM SPANKY
+1	170	君の知らない物語	supercell
+2	170	君色シグナル	春奈るな
+1	180	世界をかえさせておくれよ	サンボマスター
+2	180	続く道	クリスハートfeaturingゴスペラーズ
+1	180	拝啓、ツラツストラ	グッドモーニングアメリカ
+2	160	風	山猿
+2	180	夕日哀愁風車	チャットモンチー

@@ -29,12 +29,12 @@ public class InitActivity extends AppCompatActivity {
         Intent data = new Intent();
         if(view.getId() == R.id.imageButton1){
             Log.d(TAG, "熱い");
-            data.putExtra("feel", "hot");
+            data.putExtra("feel", "熱い");
             setResult(RESULT_OK, data);
             finish();
         }else if(view.getId() == R.id.imageButton2){
             Log.d(TAG, "爽やか");
-            data.putExtra("feel", "refresh");
+            data.putExtra("feel", "爽やか");
             setResult(RESULT_OK, data);
             finish();
         }

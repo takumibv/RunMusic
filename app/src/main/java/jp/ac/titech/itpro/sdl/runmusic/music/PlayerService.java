@@ -52,7 +52,7 @@ public class PlayerService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        mediaPlayer.stop();
+        if(mediaPlayer != null) mediaPlayer.stop();
         if (mWorker != null) {
             mWorker.interrupt();
         }

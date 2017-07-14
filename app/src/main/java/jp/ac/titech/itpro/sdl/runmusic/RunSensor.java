@@ -34,11 +34,11 @@ public class RunSensor implements SensorEventListener {
     private Boolean is_valid = false;
     private final static int MAX_TRY_TIME = 3;
     ArrayList<Long> point_time = new ArrayList<Long>();
-    private final static int POINT_VALID_SIZE = 5;
-    private final static int DATA_SIZE = 200;
+    private final static int POINT_VALID_SIZE = 7;
+    private final static int DATA_SIZE = 120;
     double mean = 0;
 
-    private final static int BPM_DECIDE_COUNT = 3;
+    private final static int BPM_DECIDE_COUNT = 8;
     private final static int VALID_BPM_BAND = 10;
     private int prev_bpm = 0;
     private int bpm_d_count = 0;
@@ -167,11 +167,7 @@ public class RunSensor implements SensorEventListener {
         if(point_time.size() > POINT_VALID_SIZE) point_time.remove(0);
         int bpm = 0;
         int mean = 0;
-        for(int i=0; i<point_time.size()-1; i++){
-            long a = point_time.get(i+1) - point_time.get(i);
-            mean += a;
-        }
-        if(point_time.size() > 1) mean /= (point_time.size()-1);
+        if(point_time.size() > 1) mean = (int)((point_time.get(point_time.size()-1)-point_time.get(0)) / (point_time.size()-1));
         if(mean != 0) bpm = 30000 / mean ;
         if(bpm < prev_bpm + VALID_BPM_BAND/2 && bpm > prev_bpm -VALID_BPM_BAND/2 ){
             bpm_d_count++;

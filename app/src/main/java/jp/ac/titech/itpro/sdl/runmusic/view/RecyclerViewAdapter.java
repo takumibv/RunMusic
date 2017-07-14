@@ -59,7 +59,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         String album_art_path = holder.mItem.getmAlbumArtPath();
         holder.mCoverPathView.setText(holder.mItem.getmAlbumArtPath());
-        if(album_art_path != ""){
+        if(album_art_path != "" && album_art_path != null){
             File file = new File(album_art_path);
             if(file.exists()){
                 Bitmap bm = BitmapFactory.decodeFile(file.getPath());
